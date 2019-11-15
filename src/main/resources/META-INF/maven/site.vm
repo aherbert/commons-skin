@@ -63,6 +63,12 @@
 #**##prjProfile()
     <script src="$relativePath/js/apache-maven-fluido-1.8.min.js"></script>
 #**##if( $decoration.body.head )
+#*  *### Note:
+#*  *### This is the content of the <head> tag in the site.xml.
+#*  *### commons-skin 4.0 replaced relative links in this tage.
+#*  *### The render.eval() method allows the content to be evaluated in VTL
+#*  *### (Velocity Template Language). This means anything can be put into the <head>
+#*  *### section if desired.
 #*  *#$render.eval( $decoration.body.head )
 #**##end
 #**##if( $headContent )$headContent#end
