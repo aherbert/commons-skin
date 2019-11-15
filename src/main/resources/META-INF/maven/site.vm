@@ -16,6 +16,42 @@
 ## specific language governing permissions and limitations
 ## under the License.
 ##
+
+################################################################################
+## Commons Special processing:
+## - allows relative URLs to be processed by the template by removing http://dummy.invalid/ from the start of any URL
+## - resolves $relativePath in banner and head elements
+## - allows absolute URLs in banner elements by removing '.remove.invalid' from hrefs
+## - adds <custom><footer> content after Copyright, replacing @project.name@ with current ${project.name}
+##   i.e. delays resolution of the Maven variable so it is processed in the current site context, not wherever
+##   site.xml is located.
+## - add trademark overlay if the POM property banner[Left|Right]TradePos is defined - should be a style value.
+##Following is currently disabled:
+## - add trademark overlay if <custom><bannerLeft|Right><tradePos> is defined, using the value as the style
+
+## Resolve relativePath in context of current project
+#set ( $dummy = 'http://dummy.invalid/' )
+#set ( $dummylen = $dummy.length() )
+
+## Workround to allow site.xml to use $relativePath in URLs
+#macro ( relreplace $text )
+#**##if ( $text.startsWith($dummy) )
+#*  *##set ( $text = $text.substring($dummylen) )
+#**##end
+#**##set ( $text = $text.replace( '$relativePath', $relativePath ) }
+#end
+##
+## Macro used in the custom footer
+## Remove extraneous header from custom entries
+## See DOXIA-150
+#set ( $documentHeader = '<?xml version="1.0" encoding="UTF-8"?>' )
+#macro ( removeheader $text )
+#**##set ( $text = $text.replace( $documentHeader, '' ) )
+#end
+##
+################################################################################
+
+
 #parse( "site-macros.vm" )
 #set ( $skipGenerationDate = 'true' == $decoration.getCustomValue( 'fluidoSkin.skipGenerationDate' ) )
 <!--
@@ -26,7 +62,7 @@
 #end
 #if ( !$skipGenerationDate ) at $dateFormat.format( $currentDate )#end
 
- | Rendered using Apache Maven Fluido Skin 1.8
+ | Rendered using Apache Commons Skin 5.0 (based on Maven Fluido Skin 1.8)
 -->
 ##
 <html xmlns="http://www.w3.org/1999/xhtml"#if ( $locale ) lang="$locale.language"#end>
@@ -260,7 +296,7 @@
       </div>
 #*    *##end
     </div>
-    <hr/>
+
     <footer>
 #*  *##if ( $sideBarEnabled )
       <div class="container-fluid">
@@ -278,7 +314,22 @@
 #*      *##if ( $decoration.getCustomChild( 'fluidoSkin.copyrightClass' ) )
 #*        *##set ( $copyrightClass = ' class="' + $decoration.getCustomValue( 'fluidoSkin.copyrightClass' ) + '"' )
 #*      *##end
-            <p$!copyrightClass>Copyright &#169;#copyright().#publishDate( "bottom" $decoration.publishDate $decoration.version )</p>
+
+#*      *### Changed from fluido footer to the previous custom Commons footer
+            <div class="footer">
+              <p>Copyright &copy;#copyright()All Rights Reserved.</p>
+
+#*            *##if ( $decoration.custom.getChild("footer") )
+#*              *##foreach( $item in $decoration.custom.getChild("footer").getChildren() )
+#*                *##set ( $foot = $item.toString().trim() )
+#*                *##removeheader ( $foot )
+#*                *##set ( $foot = $foot.replace( '@project.name@', ${project.name} ) )
+#*                *##set ( $foot = $foot.replace( 'Apache Apache', 'Apache' ) )
+                  $foot
+#*              *##end
+#*            *##end
+            </div>
+
 #*    *##end
         </div>
 ##
