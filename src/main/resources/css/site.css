@@ -74,6 +74,17 @@ li#publishDate .divider, li.pull-right .divider {
   color: #444
 }
 
+.sidebar-nav .icon-chevron-right, .sidebar-nav .icon-chevron-down {
+  opacity: unset;
+  background-repeat: no-repeat;
+  background-position: 0px 2px;
+  position: absolute;
+  transform: translateX(-20px);
+}
+.sidebar-nav li a > span.icon-chevron-right { background-image: url(../images/collapsed.gif) }
+.sidebar-nav li.active a > span.icon-chevron-down { background-image: url(../images/expanded.gif) }
+
+
 .navbar .nav { margin-left: 40px; }
 
 .nav-list { margin-bottom: 15px; }
