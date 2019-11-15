@@ -389,7 +389,22 @@ $indent     </ul>##
    <li class="nav-header">$menu.name $img</li>
 #*    *##end
 #*  *##else
+#*    *### Customise the icons for the menus
+#*    *##set ( $menuImg = '' )
+#*    *##if ( $menu.name == $title )
+#*      *##set ( $menuImg = "icon-home" )
+#*    *##elseif ( $menu.name == "Project Documentation" )
+#*      *##set ( $menuImg = "icon-info-sign" )
+#*    *##elseif ( $menu.name == "Development" )
+#*      *##set ( $menuImg = "icon-cog" )
+#*    *##elseif ( $menu.name == "User Guide" )
+#*      *##set ( $menuImg = "icon-book" )
+#*    *##end
+#*    *##if ( $menuImg )
+   <li class="nav-header"><i class="$menuImg"></i>$menu.name</li>
+#*    *##else
    <li class="nav-header">$menu.name</li>
+#*    *##end
 #*  *##end
 #**##end
 #**##if ( $menu.items && $menu.items.size() > 0 )
