@@ -28,15 +28,6 @@
 ## - add trademark overlay if the POM property banner[Left|Right]TradePos is defined - should be a style value.
 ##Following is currently disabled:
 ## - add trademark overlay if <custom><bannerLeft|Right><tradePos> is defined, using the value as the style
-
-## Macro used in the custom footer
-## Remove extraneous header from custom entries
-## See DOXIA-150
-#set ( $documentHeader = '<?xml version="1.0" encoding="UTF-8"?>' )
-#macro ( removeheader $text )
-#**##set ( $text = $text.replace( $documentHeader, '' ) )
-#end
-##
 ################################################################################
 
 
@@ -310,9 +301,12 @@
               <p>Copyright &copy;#copyright()All Rights Reserved.</p>
 
 #*            *##if ( $decoration.custom.getChild("footer") )
+#*              *### Remove extraneous header from custom entries
+#*              *### See DOXIA-150
+#*              *##set ( $documentHeader = '<?xml version="1.0" encoding="UTF-8"?>' )
 #*              *##foreach( $item in $decoration.custom.getChild("footer").getChildren() )
 #*                *##set ( $foot = $item.toString().trim() )
-#*                *##removeheader ( $foot )
+#*                *##set ( $foot = $foot.replace( $documentHeader, '' ) )
 #*                *##set ( $foot = $foot.replace( '@project.name@', ${project.name} ) )
 #*                *##set ( $foot = $foot.replace( 'Apache Apache', 'Apache' ) )
                   $foot
