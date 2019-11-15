@@ -29,18 +29,6 @@
 ##Following is currently disabled:
 ## - add trademark overlay if <custom><bannerLeft|Right><tradePos> is defined, using the value as the style
 
-## Resolve relativePath in context of current project
-#set ( $dummy = 'http://dummy.invalid/' )
-#set ( $dummylen = $dummy.length() )
-
-## Workround to allow site.xml to use $relativePath in URLs
-#macro ( relreplace $text )
-#**##if ( $text.startsWith($dummy) )
-#*  *##set ( $text = $text.substring($dummylen) )
-#**##end
-#**##set ( $text = $text.replace( '$relativePath', $relativePath ) }
-#end
-##
 ## Macro used in the custom footer
 ## Remove extraneous header from custom entries
 ## See DOXIA-150
@@ -218,7 +206,7 @@
         <div id="banner">
           <div class="pull-left">##
 #*        *##if( $decoration.bannerLeft )
-#*          *##banner( $decoration.bannerLeft "bannerLeft" )
+#*          *##banner( $decoration.bannerLeft "bannerLeft" "logo-left" )
 #*        *##else
 #*        *### MSKINS-32
             <h1>##
@@ -230,7 +218,7 @@
 #*        *#</h1>##
 #*        *##end
 #*      *#</div>
-          <div class="pull-right">#banner( $decoration.bannerRight "bannerRight" )</div>
+          <div class="pull-right">#banner( $decoration.bannerRight "bannerRight" "logo-right" )</div>
           <div class="clear"><hr/></div>
         </div>
 

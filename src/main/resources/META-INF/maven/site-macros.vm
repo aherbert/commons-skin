@@ -15,6 +15,25 @@
 ## specific language governing permissions and limitations
 ## under the License.
 ##
+
+################################################################################
+## Commons Special processing:
+
+## Resolve relativePath in context of current project
+#set ( $dummy = 'http://dummy.invalid/' )
+#set ( $dummylen = $dummy.length() )
+
+## Workround to allow site.xml to use $relativePath in URLs
+#macro ( relreplace $text )
+#**##if ( $text.startsWith($dummy) )
+#*  *##set ( $text = $text.substring($dummylen) )
+#**##end
+#**##set ( $text = $text.replace( '$relativePath', $relativePath ) )
+#end
+
+################################################################################
+
+
 #macro ( topMenu $menus )
 #**##foreach( $menu in $menus )
 #**##if ( $menu.name )
@@ -128,10 +147,10 @@
 #**##end
 #end
 ##
-#macro ( banner $banner $id )
+#macro ( banner $banner $id $class )
 #**##if ( $banner )
 #*  *##if( $banner.href )
-#*    *##set ( $hrf = $banner.href )
+#*    *##set ( $hrf = $banner.href.replace('.remove.invalid' ,'') )
 #*    *##if ( !$decoration.isLink( $hrf ) )
 #*      *##set ( $hrf = $PathTool.calculateLink( $hrf, $relativePath ) )
 #*      *##set ( $hrf = $hrf.replaceAll( '\\', '/' ) )
@@ -177,7 +196,17 @@
 #*    *##else
 #*      *##set ( $bannerTitle="" )
 #*    *##end
-#*    *#<img src="$src" $alt$bannerTitle$imgBorder$imgWidth$imgHeight/>##
+#*    *### This does not work so the functionality is currently duplicated.
+#*    *### It is unclear how to use a Velocity 1.7 macro to update an input string.
+#*    *##relreplace( $src )
+##
+#*    *###TODO - move this to a macro
+#*    *##if ( $src.startsWith($dummy) )
+#*      *##set ( $src = $src.substring($dummylen) )
+#*    *##end
+#*    *##set ( $src = $src.replace( '$relativePath', $relativePath ) )
+##
+#*    *#<img class="$class" src="$src" $alt$bannerTitle$imgBorder$imgWidth$imgHeight/>##
 #*  *##else
 #*    *#<h2>$banner.name</h2>
 #*  *##end
