@@ -4,8 +4,15 @@ div.clear hr { display: none; }
 /* Tweaks to the fluido skin
 --------------------------------- */
 
-a.externalLink[href^="http"] {
-    background-image: none;
+/* Reset all links to remove link icons */
+a.externalLink, a.newWindow,
+a.externalLink[href^=http], a.externalLink[href$=".asc"],
+a.externalLink[href$=".jpg"], a.externalLink[href$=".jpeg"], a.externalLink[href$=".gif"],
+a.externalLink[href$=".png"], a.externalLink[href$=".tar.gz"], a.externalLink[href$=".zip"],
+a.externalLink[href$=".md5"], a.externalLink[href$=".sha1"],
+a.externalLink[href^=https], a.externalLink[href^=file],
+a.externalLink[href^=ftp], a.externalLink[href^=mailto] {
+  background: unset; padding-right: 0px
 }
 
 #publishDate, #projectVersion {
