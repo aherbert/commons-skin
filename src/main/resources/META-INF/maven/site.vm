@@ -222,8 +222,10 @@
           <div class="clear"><hr/></div>
         </div>
 
+
         <div id="breadcrumbs">
           <ul class="breadcrumb">
+          <a class="brand" href="$project.url">$project.name &trade;</a>
 #*        *##publishDate( "left" $decoration.publishDate $decoration.version )
 #*        *##publishDate( "right" $decoration.publishDate $decoration.version )
 ##
