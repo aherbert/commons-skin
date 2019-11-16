@@ -419,7 +419,7 @@ $indent     </ul>##
 #macro ( copyright )
 #**##if ( $project )
 #*  *##if ( ${project.organization} && ${project.organization.name} )
-#*    *##set ( $period = "" )
+#*    *##set ( $period = "&nbsp;" )
 #*  *##else
 #*    *##set ( $period = "." )
 #*  *##end
