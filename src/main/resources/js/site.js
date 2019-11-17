@@ -26,11 +26,20 @@ $(document).ready(function() {
 	// with:
 	// <div class="prettyprint"><pre>...</pre></div>
 	//
+	// For example any XDOC format <source class="prettyprint"> blocks are converted to:
+	// <div class="prettyprint"><pre>...</pre></div>
+	// 
+	// Any APT format <pre> blocks output within '+--' lines are converted to:
+	// <div class="source"><pre>...</pre></div>
+	// 
 	// Effectively, it removes the class parameter from the <pre> element, which
 	// is required for google-code-prettify to work.
 	// 
-	// This hack restores the class of all <pre> elements which are the child of 
-	// a <div class="prettyprint">.
+	// This hack:
+	// (1) restores the class of all <pre> elements which are the child of 
+	//     a <div class="prettyprint">;
+	// (2) sets all <pre> elements which are the child of a 
+	//     <div class="source"> to prettyprint.
 	//
 	$('pre').each(function() {
 		var parent = $(this).parent();
@@ -43,6 +52,10 @@ $(document).ready(function() {
 		if (parent.hasClass('linenums')) {
 			parent.removeClass('linenums');
 			$(this).addClass('linenums');
+		}
+
+		if (parent.hasClass('source')) {
+			$(this).addClass('prettyprint');
 		}
 	})
 	
