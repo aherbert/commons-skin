@@ -7,7 +7,7 @@
 ##
 ## Special processing:
 ## - allows relative URLs to be processed by the template by removing http://dummy.invalid/ from the start of any URL
-## - resolves $relativePath in banner and head elements
+## - resolves $relativePath in banner elements
 ## - allows absolute URLs in banner elements by removing '.remove.invalid' from hrefs
 ## - adds <custom><footer> content after Copyright, replacing @project.name@ with current ${project.name}
 ##   i.e. delays resolution of the Maven variable so it is processed in the current site context, not wherever
@@ -21,19 +21,10 @@
 #set ( $dummylen = $dummy.length() )
 #macro ( relreplace $text )
 ## Workround to allow site.xml to use $relativePath in URLs
-#if ( $text.startsWith($dummy) )#set ( $text = $text.substring($dummylen) )#end
-$StringUtils.replace( $text, '$relativePath', $relativePath )##
-#end
-##
-## Remove extraneous header from custom entries
-## See DOXIA-150
-#set ( $documentHeader = '<?xml version="1.0" encoding="UTF-8"?>' )
-#macro ( removeheader $text )
-#set ( $text = $StringUtils.replace( $text, $documentHeader, '' ) )
-#end
-##
-#macro ( removeDuplicateApacheName $text )
-#set ( $text = $StringUtils.replace( $text, 'Apache Apache', 'Apache' ) )
+  #if ( $text.startsWith($dummy) )
+    #set ( $text = $text.substring($dummylen) )
+  #end
+  $StringUtils.replace( $text, '$relativePath', $relativePath )
 #end
 ##
 #macro ( link $href $name $target $img $position $alt $border $width $height )
@@ -497,33 +488,33 @@ $StringUtils.replace( $text, '$relativePath', $relativePath )##
 #end
     <title>$title</title>
 
-  <link rel="stylesheet" href="$relativePath/css/bootstrap.min.css" type="text/css" />
-  <link rel="stylesheet" href="$relativePath/css/site.css" type="text/css" />
+    <link rel="stylesheet" href="$relativePath/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="$relativePath/css/site.css" type="text/css" />
     <link rel="stylesheet" href="$relativePath/css/print.css" media="print" />
 
-  <script type="text/javascript" src="$relativePath/js/jquery.min.js"></script>
-  <script type="text/javascript" src="$relativePath/js/bootstrap.min.js"></script>
-  <script type="text/javascript" src="$relativePath/js/prettify.min.js"></script>
-  <script type="text/javascript" src="$relativePath/js/site.js"></script>
+    <script type="text/javascript" src="$relativePath/js/jquery.min.js"></script>
+    <script type="text/javascript" src="$relativePath/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="$relativePath/js/prettify.min.js"></script>
+    <script type="text/javascript" src="$relativePath/js/site.js"></script>
 
-    #if ( $decoration.body.head )
-      #foreach( $item in $decoration.body.head.getChildren() )
-        #set ( $head = $item.toString().trim() )
-        #set ( $documentHeader = '<?xml version="1.0" encoding="UTF-8"?>' )
-        #if ( $item.name == "script" )
-          #relreplace( $StringUtils.replace( $item.toUnescapedString(), $documentHeader, "" ) )
-        #else
-          #relreplace( $StringUtils.replace( $item.toString(), $documentHeader, "" ) )
-        #end
-      #end
+    #if( $decoration.body.head )
+      ## Note:
+      ## This is the content of the <head> tag in the site.xml.
+      ## It can be used to contain any injected XHTML escaped by CDATA.
+      ## The render.eval() method allows the content to be evaluated in VTL
+      ## (Velocity Template Language). This means anything can be put into 
+      ## the <head> section if desired.
+      ## Relative links can be rendered in scripts or links using
+      ## $relativePath (as above).
+      $render.eval( $decoration.body.head )
     #end
 
-    #if( $headContent )$headContent#end
+    #if( $headContent ) $headContent #end
   </head>
 
   <body class="composite">
-        #banner( $decoration.bannerLeft "bannerLeft" "logo-left" )
-        #banner( $decoration.bannerRight "bannerRight" "logo-right" )
+    #banner( $decoration.bannerLeft "bannerLeft" "logo-left" )
+    #banner( $decoration.bannerRight "bannerRight" "logo-right" )
     <div class="clear"></div>
 
     <div class="navbar">
@@ -556,15 +547,18 @@ $StringUtils.replace( $text, '$relativePath', $relativePath )##
 
     <div class="footer">
       <p>Copyright &copy;#copyright()All Rights Reserved.</p>
-            #if ( $decoration.custom.getChild("footer") )
-              #foreach( $item in $decoration.custom.getChild("footer").getChildren() )
-                #set ( $foot = $item.toString().trim() )
-                #removeheader ( $foot )
-        #set ( $foot = $StringUtils.replace( $foot, '@project.name@', ${project.name} ) )
-                #removeDuplicateApacheName ( $foot )
-        $foot
-              #end
-            #end
+        #if ( $decoration.custom.getChild("footer") )
+          ## Remove extraneous header from custom entries
+          ## See DOXIA-150
+          #set ( $documentHeader = '<?xml version="1.0" encoding="UTF-8"?>' )
+          #foreach( $item in $decoration.custom.getChild("footer").getChildren() )
+            #set ( $foot = $item.toString().trim() )
+            #set ( $foot = $StringUtils.replace( $foot, $documentHeader, '' ) )
+            #set ( $foot = $StringUtils.replace( $foot, '@project.name@', ${project.name} ) )
+            #set ( $foot = $StringUtils.replace( $foot, 'Apache Apache', 'Apache' ) )
+            $foot
+          #end
+        #end
     </div>
   </body>
 
