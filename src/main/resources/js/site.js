@@ -53,10 +53,6 @@ $(document).ready(function() {
 			parent.removeClass('linenums');
 			$(this).addClass('linenums');
 		}
-
-		if (parent.hasClass('source')) {
-			$(this).addClass('prettyprint');
-		}
 	})
 	
 	// Hack to add default visuals to tables
